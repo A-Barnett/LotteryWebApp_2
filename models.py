@@ -1,8 +1,9 @@
 from datetime import datetime
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from app import db, app
 import bcrypt
 from cryptography.fernet import Fernet
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -62,9 +63,9 @@ class Draw(db.Model):
     # Lottery round that draw is used
     lottery_round = db.Column(db.Integer, nullable=False, default=0)
 
-    def __init__(self, user_id, numbers, master_draw, lottery_round, postkey):
+    def __init__(self, user_id, numbers, master_draw, lottery_round):
         self.user_id = user_id
-        self.numbers = encrypt(numbers, postkey)
+        self.numbers = encrypt(numbers, current_user.postkey)
         self.been_played = False
         self.matches_master = False
         self.master_draw = master_draw

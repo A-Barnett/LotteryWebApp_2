@@ -2,9 +2,10 @@
 import logging
 
 from flask import Blueprint, render_template, request, flash
-
+import bcrypt
+from flask_login import current_user
 from app import db
-from models import Draw
+from models import Draw, decrypt
 
 # CONFIG
 lottery_blueprint = Blueprint('lottery', __name__, template_folder='templates')
@@ -36,16 +37,22 @@ def add_draw():
     return lottery()
 
 
+
+
 # view all draws that have not been played
 @lottery_blueprint.route('/view_draws', methods=['POST'])
 def view_draws():
     # get all draws that have not been played [played=0]
     playable_draws = Draw.query.filter_by(been_played=False).all()  # TODO: filter playable draws for current user
-
+    playable_draws_de = []
     # if playable draws exist
+    for d in playable_draws:
+        playable_draws_de.append(decrypt(d.numbers, current_user.postkey))
+
     if len(playable_draws) != 0:
         # re-render lottery page with playable draws
-        return render_template('lottery/lottery.html', playable_draws=playable_draws)
+        print(playable_draws_de)
+        return render_template('lottery/lottery.html', playable_draws=playable_draws_de)
     else:
         flash('No playable draws.')
         return lottery()

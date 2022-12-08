@@ -1,7 +1,7 @@
 # IMPORTS
 import bcrypt
 from flask import Blueprint, render_template, flash, redirect, url_for
-
+from flask_login import login_user, current_user
 from app import db
 from models import User
 from users.forms import RegisterForm, LoginForm
@@ -56,6 +56,7 @@ def login():
             flash('Please check your login details and try again')
             return render_template('users/login.html', form=form)
 
+        login_user(user)
         return redirect(url_for('users.account'))
     return render_template('users/login.html', form=form)
 
@@ -69,8 +70,8 @@ def profile():
 @users_blueprint.route('/account')
 def account():
     return render_template('users/account.html',
-                           acc_no="PLACEHOLDER FOR USER ID",
-                           email="PLACEHOLDER FOR USER EMAIL",
-                           firstname="PLACEHOLDER FOR USER FIRSTNAME",
-                           lastname="PLACEHOLDER FOR USER LASTNAME",
-                           phone="PLACEHOLDER FOR USER PHONE")
+                           acc_no=current_user.id,
+                           email=current_user.email,
+                           firstname=current_user.firstname,
+                           lastname=current_user.lastname,
+                           phone=current_user.phone)
