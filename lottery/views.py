@@ -3,7 +3,6 @@ import logging
 
 from flask import Blueprint, render_template, request, flash
 import bcrypt
-from flask_login import current_user
 from app import db
 from models import Draw, decrypt
 
@@ -42,6 +41,7 @@ def add_draw():
 # view all draws that have not been played
 @lottery_blueprint.route('/view_draws', methods=['POST'])
 def view_draws():
+    from flask_login import current_user
     # get all draws that have not been played [played=0]
     playable_draws = Draw.query.filter_by(been_played=False).all()  # TODO: filter playable draws for current user
     playable_draws_de = []

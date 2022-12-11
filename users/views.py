@@ -1,7 +1,10 @@
 # IMPORTS
 import bcrypt
-from flask import Blueprint, render_template, flash, redirect, url_for
-from flask_login import login_user, current_user
+import pyotp
+from flask import Blueprint, render_template, flash, redirect, url_for, session
+from flask_login import login_user, current_user, logout_user
+from markupsafe import Markup
+
 from app import db
 from models import User
 from users.forms import RegisterForm, LoginForm
@@ -49,21 +52,43 @@ def register():
 @users_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    if not session.get('authentication_attempts'):
+        session['authentication_attempts'] = 0
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.username.data).first()
 
         if not user or not bcrypt.checkpw(form.password.data.encode('utf-8'), user.password):
-            flash('Please check your login details and try again')
+            # or not pyotp.TOTP(user.pinkey).verify(form.pin.data):
+
+            if session.get('authentication_attempts') >= 3:
+                flash(Markup('Number of incorrect login attempts exceeded. '
+                             'Please click <a href="/reset">here</a> to reset.'))
+                return render_template('users/login.html')
+            flash('Please check your login details and try again, '
+                  '{} login attempts remaining'.format(3 - session.get('authentication_attempts')))
+            session['authentication_attempts'] += 1
             return render_template('users/login.html', form=form)
 
         login_user(user)
         return redirect(url_for('users.account'))
     return render_template('users/login.html', form=form)
 
+
 # view user profile
 @users_blueprint.route('/profile')
 def profile():
-    return render_template('users/profile.html', name="PLACEHOLDER FOR FIRSTNAME")
+    return render_template('users/profile.html', name=current_user.firstname)
+
+@users_blueprint.route('/reset')
+def reset():
+    session['authentication_attempts'] = 0
+    return redirect(url_for('users.login'))
+
+
+@users_blueprint.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 # view user account

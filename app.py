@@ -1,4 +1,6 @@
 # IMPORTS
+import os
+
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
@@ -33,6 +35,9 @@ app.register_blueprint(lottery_blueprint)
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.init_app(app)
+app.config['RECAPTCHA_PUBLIC_KEY'] = os.getenv('RECAPTCHA_PUBLIC_KEY')
+app.config['RECAPTCHA_PRIVATE_KEY'] = os.getenv('RECAPTCHA_PRIVATE_KEY')
+
 
 
 @login_manager.user_loader

@@ -1,4 +1,6 @@
 from datetime import datetime
+
+import pyotp
 from flask_login import UserMixin, current_user
 from app import db, app
 import bcrypt
@@ -8,6 +10,7 @@ from cryptography.fernet import Fernet
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     postkey = db.Column(db.BLOB)
+    pinkey = db.Column(db.String(100), nullable=False)
     id = db.Column(db.Integer, primary_key=True)
 
     # User authentication information.
@@ -31,6 +34,7 @@ class User(db.Model, UserMixin):
         self.phone = phone
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         self.role = role
+        self.pinkey = pyotp.random_base32()
 
 
 def encrypt(data, numbers):
