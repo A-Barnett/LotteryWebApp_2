@@ -9,6 +9,9 @@ from cryptography.fernet import Fernet
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
+    registered_on = db.Column(db.DateTime, nullable=False)
+    current_login = db.Column(db.DateTime, nullable=True)
+    last_login = db.Column(db.DateTime, nullable=True)
     postkey = db.Column(db.BLOB)
     pinkey = db.Column(db.String(100), nullable=False)
     id = db.Column(db.Integer, primary_key=True)
@@ -35,14 +38,18 @@ class User(db.Model, UserMixin):
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         self.role = role
         self.pinkey = pyotp.random_base32()
+        self.registered_on = datetime.now()
+        self.current_login = None
+        self.last_login = None
 
 
-def encrypt(data, numbers):
-    return Fernet(numbers).encrypt(bytes(data, 'utf-8'))
+def encrypt(data, key):
+    return Fernet(key).encrypt(bytes(data, 'utf-8'))
 
 
-def decrypt(data, numbers):
-    return Fernet(numbers).decrypt(data).decode('utf-8')
+def decrypt(data, key):
+    return Fernet(key).decrypt(data).decode('utf-8')
+
 
 class Draw(db.Model):
     __tablename__ = 'draws'

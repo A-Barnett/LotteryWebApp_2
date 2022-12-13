@@ -1,13 +1,15 @@
 # IMPORTS
 import bcrypt
+from datetime import datetime
 import pyotp
 from flask import Blueprint, render_template, flash, redirect, url_for, session
 from flask_login import login_user, current_user, logout_user
 from markupsafe import Markup
-
+import logging
 from app import db
 from models import User
 from users.forms import RegisterForm, LoginForm
+from flask_login import login_required
 
 # CONFIG
 users_blueprint = Blueprint('users', __name__, template_folder='templates')
@@ -43,6 +45,7 @@ def register():
         db.session.commit()
 
         # sends user to login page
+        logging.warning('SECURITY - User register [%s, %s]’,form.username.data,request.remote_addr')
         return redirect(url_for('users.login'))
     # if request method is GET or form not valid re-render signup page
     return render_template('users/register.html', form=form)
@@ -59,25 +62,42 @@ def login():
 
         if not user or not bcrypt.checkpw(form.password.data.encode('utf-8'), user.password):
             # or not pyotp.TOTP(user.pinkey).verify(form.pin.data):
+            logging.warning('SECURITY - Invalid login [%s, %s]’,form.username.data,request.remote_addr')
 
             if session.get('authentication_attempts') >= 3:
                 flash(Markup('Number of incorrect login attempts exceeded. '
                              'Please click <a href="/reset">here</a> to reset.'))
                 return render_template('users/login.html')
+
             flash('Please check your login details and try again, '
                   '{} login attempts remaining'.format(3 - session.get('authentication_attempts')))
             session['authentication_attempts'] += 1
             return render_template('users/login.html', form=form)
 
         login_user(user)
-        return redirect(url_for('users.account'))
+        user.last_login = user.current_login
+        user.current_login = datetime.now()
+        db.session.add(user)
+        db.session.commit()
+        logging.warning('SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr')
+        if current_user.role == 'user':
+            return redirect(url_for('users.profile'))
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.admin'))
+
     return render_template('users/login.html', form=form)
 
 
 # view user profile
 @users_blueprint.route('/profile')
+@login_required
 def profile():
-    return render_template('users/profile.html', name=current_user.firstname)
+    if current_user.role == 'user':
+        return render_template('users/profile.html', name=current_user.firstname)
+    else:
+        logging.warning('SECURITY -  Invalid access [%s, %s, %s, %s]’,current_user.id,current_user.username,'
+                        'current_user.role,request.remote_addr')
+
 
 @users_blueprint.route('/reset')
 def reset():
@@ -86,13 +106,16 @@ def reset():
 
 
 @users_blueprint.route('/logout')
+@login_required
 def logout():
+    logging.warning('SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr')
     logout_user()
     return redirect(url_for('index'))
 
 
 # view user account
 @users_blueprint.route('/account')
+@login_required
 def account():
     return render_template('users/account.html',
                            acc_no=current_user.id,

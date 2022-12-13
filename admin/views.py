@@ -1,7 +1,12 @@
 # IMPORTS
+import logging
+
 from flask import Blueprint, render_template, request, flash
+from flask_login import current_user, login_required
+
 from app import db
-from models import User, Draw
+from lottery.views import validate_numbers
+from models import User, Draw, decrypt
 
 # CONFIG
 admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
@@ -10,8 +15,13 @@ admin_blueprint = Blueprint('admin', __name__, template_folder='templates')
 # VIEWS
 # view admin homepage
 @admin_blueprint.route('/admin')
+@login_required
 def admin():
-    return render_template('admin/admin.html', name="PLACEHOLDER FOR FIRSTNAME")
+    if current_user.role == 'admin':
+        return render_template('admin/admin.html', name=current_user.firstname)
+    else:
+        logging.warning('SECURITY -  Invalid access [%s, %s, %s, %s]’,current_user.id,current_user.username,'
+                        'current_user.role,request.remote_addr')
 
 
 # view all registered users
@@ -19,7 +29,7 @@ def admin():
 def view_all_users():
     current_users = User.query.filter_by(role='user').all()
 
-    return render_template('admin/admin.html', name="PLACEHOLDER FOR FIRSTNAME", current_users=current_users)
+    return render_template('admin/admin.html', name=current_user.firstname, current_users=current_users)
 
 
 # create a new winning draw
@@ -45,16 +55,18 @@ def create_winning_draw():
         submitted_draw += request.form.get('no' + str(i + 1)) + ' '
     # remove any surrounding whitespace
     submitted_draw.strip()
+    check = validate_numbers(submitted_draw)
 
     # create a new draw object with the form data.
-    new_winning_draw = Draw(user_id=0, numbers=submitted_draw, master_draw=True, lottery_round=lottery_round)
+    if check:
+        new_winning_draw = Draw(user_id=0, numbers=submitted_draw, master_draw=True, lottery_round=lottery_round)
 
     # add the new winning draw to the database
-    db.session.add(new_winning_draw)
-    db.session.commit()
+        db.session.add(new_winning_draw)
+        db.session.commit()
 
     # re-render admin page
-    flash("New winning draw added.")
+        flash("New winning draw added.")
     return admin()
 
 
@@ -64,11 +76,14 @@ def view_winning_draw():
 
     # get winning draw from DB
     current_winning_draw = Draw.query.filter_by(master_draw=True,been_played=False).first()
-
+    # if playable draws exist
     # if a winning draw exists
     if current_winning_draw:
+        print('\n\n')
+        print(decrypt(current_winning_draw.numbers, current_user.postkey))
+        print('\n\n')
         # re-render admin page with current winning draw and lottery round
-        return render_template('admin/admin.html', winning_draw=current_winning_draw, name="PLACEHOLDER FOR FIRSTNAME")
+        return render_template('admin/admin.html', winning_draw=decrypt(current_winning_draw.numbers, current_user.postkey), name=current_user.firstname)
 
     # if no winning draw exists, rerender admin page
     flash("No valid winning draw exists. Please add new winning draw.")
@@ -87,6 +102,8 @@ def run_lottery():
 
         # get all unplayed user draws
         user_draws = Draw.query.filter_by(master_draw=False, been_played=False).all()
+
+
         results = []
 
         # if at least one unplayed user draw exists
@@ -102,12 +119,13 @@ def run_lottery():
 
                 # get the owning user (instance/object)
                 user = User.query.filter_by(id=draw.user_id).first()
+                postkey_user = User.query.filter_by(id=draw.user_id).first()
 
                 # if user draw matches current unplayed winning draw
-                if draw.numbers == current_winning_draw.numbers:
+                if decrypt(draw.numbers, postkey_user.postkey) == decrypt(current_winning_draw.numbers, current_user.postkey):
 
                     # add details of winner to list of results
-                    results.append((current_winning_draw.lottery_round, draw.numbers, draw.user_id, user.email))
+                    results.append((current_winning_draw.lottery_round, decrypt(draw.numbers, postkey_user.postkey), draw.user_id, user.email))
 
                     # update draw as a winning draw (this will be used to highlight winning draws in the user's
                     # lottery page)
@@ -127,7 +145,7 @@ def run_lottery():
             if len(results) == 0:
                 flash("No winners.")
 
-            return render_template('admin/admin.html', results=results, name="PLACEHOLDER FOR FIRSTNAME")
+            return render_template('admin/admin.html', results=results, name=current_user.firstname)
 
         flash("No user draws entered.")
         return admin()
@@ -144,4 +162,4 @@ def logs():
         content = f.read().splitlines()[-10:]
         content.reverse()
 
-    return render_template('admin/admin.html', logs=content, name="PLACEHOLDER FOR FIRSTNAME")
+    return render_template('admin/admin.html', logs=content, name=current_user.firstname)

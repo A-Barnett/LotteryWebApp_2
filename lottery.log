@@ -1,0 +1,46 @@
+12/13/2022 12:13:48 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:14:00 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:14:06 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:15:22 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:15:24 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:15:57 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:32:57 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:33:07 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:33:10 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:37:25 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:39:27 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:39:55 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:46:28 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 12:46:42 AM : SECURITY - Invalid login [%s, %s]’,form.username.data,request.remote_addr
+12/13/2022 12:46:47 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:04:37 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:04:45 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:14:08 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:14:21 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:16:44 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:16:57 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:18:48 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:18:58 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:32:52 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:33:05 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:33:13 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:33:22 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:33:34 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:33:48 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:34:02 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:34:13 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:46:06 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:46:26 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:46:36 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:46:44 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:55:53 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:56:03 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:56:10 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:56:17 AM : SECURITY - Invalid login [%s, %s]’,form.username.data,request.remote_addr
+12/13/2022 01:56:29 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:57:07 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:57:27 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:57:34 AM : SECURITY - Log out [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:57:43 AM : SECURITY - Invalid login [%s, %s]’,form.username.data,request.remote_addr
+12/13/2022 01:57:55 AM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr
+12/13/2022 01:38:40 PM : SECURITY - Log in [%s, %s, %s]’,current_user.id,current_user.username,request.remote_addr

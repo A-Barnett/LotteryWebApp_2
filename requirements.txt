@@ -7,3 +7,4 @@ bcrypt
 WTForms
 cryptography
 pyotp
+Flask-Talisman

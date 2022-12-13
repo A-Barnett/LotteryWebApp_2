@@ -5,13 +5,16 @@ function luckyDip() {
     let draw = new Set();
 
     // while set does not contain 6 values, create a random value between 1 and 60
+    let csRandomNumber;
+    let randomBuffer;
+    let i;
     while (draw.size < 6) {
-        min = Math.ceil(1);
-        max = Math.floor(60);
-        value = Math.floor(Math.random() * (max - min + 1) + min);
+        randomBuffer = new Uint32Array(1);
+        window.crypto.getRandomValues(randomBuffer);
+        csRandomNumber = randomBuffer[0] / (0xFFFFFFFF)
+        i = Math.round(csRandomNumber * 60)
+        draw.add(i)
 
-        // sets cannot contain duplicates so value is only added if it does not exist in set
-        draw.add(value)
     }
 
     // turn set into an array
